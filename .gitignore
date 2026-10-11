@@ -1,0 +1,6 @@
+# Seanime type definitions (GPL-3.0), downloaded by: node scripts/types.js
+types/
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
