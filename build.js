@@ -19,7 +19,8 @@ const SRC = path.join(__dirname, "src");
 const DIST = path.join(__dirname, "dist");
 const RAW = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/dist`;
 
-const read = f => fs.readFileSync(path.join(SRC, f), "utf8");
+// LF everywhere, so dist/ is identical whatever line endings the checkout uses.
+const read = f => fs.readFileSync(path.join(SRC, f), "utf8").replace(/\r\n/g, "\n");
 
 // ---------------------------------------------------------------- manga provider
 
