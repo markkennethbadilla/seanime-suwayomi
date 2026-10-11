@@ -1,40 +1,58 @@
-# Seanime × Suwayomi: Tachiyomi/Mihon extensions for Seanime manga
+# Seanime × Suwayomi
 
 **English** · [Bahasa Indonesia](README.id.md) · [Español](README.es.md) · [Português (BR)](README.pt-BR.md) · [简体中文](README.zh-CN.md) · [Русский](README.ru.md) · [Français](README.fr.md)
 
-Read manga in [Seanime](https://seanime.app) from any **Tachiyomi / Mihon extension**
-(the keiyoushi repo and others), with **zero setup**. You don't need to install Java or Docker or
-edit any config files.
+Read manga in [Seanime](https://seanime.app) with **Tachiyomi / Mihon extensions**, powered by Suwayomi.
 
-The plugin downloads a portable [Suwayomi-Server](https://github.com/Suwayomi/Suwayomi-Server)
-and runs it in the background. Suwayomi is what runs the Mihon extensions on a PC.
+Java included on Windows x64, Linux x64 and macOS. Other devices need **Java 21+**.
 
-- **Mihon Extensions page** in the Seanime sidebar: add repos, then search, filter, install, update and uninstall extensions.
-- **Every installed source appears in Seanime's manga "Source" list**, e.g. `Komiku (ID) (Suwayomi)` or `MangaDex (Suwayomi)`. If one source has broken images or missing chapters, switch to another one.
-- **"Suwayomi (Mihon/Tachiyomi)"** searches all sources at once. In **Manual match**, each result shows its source, its chapter count and its latest chapter, e.g. `[Komiku (ID) · 41 ch · latest 39]`.
-- **Images load** through Seanime's image proxy.
-- **Updates are automatic** through Seanime's extension updater.
+![Mihon Extensions page in Seanime](docs/screenshots/mihon-extensions.jpg)
+
+## Quick start
+
+1. Open **Extensions → Add extension** in Seanime. Paste the URL below, click **Install**, then **Grant** when permissions are requested.
+
+   ```text
+   https://raw.githubusercontent.com/oktavianto/seanime-suwayomi/main/dist/suwayomi-launcher.json
+   ```
+
+2. Once Suwayomi is ready, open **Mihon Extensions** in the sidebar. Add a repo URL (`index.min.json`), install a source, then click **Allow** to enable it.
+3. Open a manga → **Source** → choose `<source> (Suwayomi)`. Read.
+
+First start downloads **200–350 MB once**. Follow progress in the Suwayomi tray icon at the top of Seanime.
 
 > [!IMPORTANT]
 > This project does not provide, host, or distribute any media content. Users are responsible for obtaining media through legal means and complying with their local laws. Extensions listed in the app are unaffiliated with this project or Seanime and may be removed if they violate copyright laws.
 
-## Install (1 minute)
+---
 
-1. In Seanime, open **Extensions** → **Add extension** and paste this URL:
+[Features](#features) · [Troubleshooting](#troubleshooting) · [Platforms & Java](#supported-platforms) · [Permissions](#permissions) · [Your own server](#using-your-own-suwayomi-server) · [Development](#development)
 
-   ```
-   https://raw.githubusercontent.com/oktavianto/seanime-suwayomi/main/dist/suwayomi-launcher.json
-   ```
+<a id="features"></a>
 
-2. Click **Install**. The plugin then shows **"Permissions required"**. Click **Grant**.
-   See [Permissions](#permissions) for exactly what it asks for.
-3. Wait for the first start. Suwayomi is downloaded **once** (about 200–350 MB). Progress shows in the Suwayomi tray icon at the top of Seanime.
-4. Open **Mihon Extensions** in the sidebar and add a repo URL, for example a Mihon/keiyoushi
-   `index.min.json`. Then install the sources you want.
-5. Seanime asks *"Allow Suwayomi Launcher to enable …?"* for each new source. Click **Allow**.
-6. Open any manga in Seanime → **Source** → pick `<source> (Suwayomi)`.
+## How it works
 
-The launcher also installs the "Suwayomi (Mihon/Tachiyomi)" manga provider, so you don't need to add it yourself.
+The launcher downloads portable [Suwayomi-Server](https://github.com/Suwayomi/Suwayomi-Server), runs it in the background and installs the manga provider automatically.
+
+- **Manage extensions:** add repos, search, filter, install, update and uninstall from **Mihon Extensions**.
+- **Choose a source:** each installed source appears in Seanime, e.g. `Example (EN) (Suwayomi)`. Switch sources if images or chapters are missing.
+- **Search across sources:** choose **Suwayomi (Mihon/Tachiyomi)**. **Manual match** shows the source, chapter count and latest chapter, e.g. `[Example (EN) · 41 ch · latest 39]`.
+- **Images & updates:** images use Seanime’s proxy; plugin updates use Seanime’s extension updater.
+
+| | |
+|---|---|
+| ![Manga page using a Suwayomi source](docs/screenshots/manga-source.jpg) | ![Suwayomi tray menu](docs/screenshots/tray.jpg) |
+| Chapters load from the chosen `(Suwayomi)` source | Server status in the tray |
+
+## Troubleshooting
+
+- **New sources don't appear in the Source list.** When you install a source, Seanime asks *"Allow Suwayomi Launcher to enable …?"*. Click **Allow**. If you clicked Don't Allow, or the question didn't show up, restart Seanime and the source is loaded at startup.
+- **"Suwayomi did not start".** Another program may be using port 4567. Close it, or stop any other Suwayomi you run, then press **Start / Retry**. Seanime's logs show lines starting with `[suwayomi]`.
+- **Custom Seanime data folder** (`--datadir`, Docker): Suwayomi still works, but the
+  per-source providers can't be generated. Use "Suwayomi (Mihon/Tachiyomi)" and its
+  **Sources** setting instead.
+- **Extension Secure Mode** is on: Seanime asks before the plugin runs a command or touches files. Accept the prompts on first start.
+- **A source fails or has Cloudflare.** That's the Mihon extension itself. Try another source for the same manga.
 
 ## Supported platforms
 
@@ -77,21 +95,6 @@ The launcher is a Seanime plugin with the `system` and `extensions` scopes. What
 `<config>` is `%APPDATA%` on Windows, `~/Library/Application Support` on macOS and `~/.config` on Linux.
 That is Seanime's default data folder.
 
-## Troubleshooting
-
-- **New sources don't appear in the Source list.** When you install a source, Seanime asks *"Allow Suwayomi Launcher to enable …?"*. Click **Allow**. If you clicked Don't Allow, or the question didn't show up, restart Seanime and the source is loaded at startup.
-- **"Suwayomi did not start".** Another program may be using port 4567. Close it, or stop any other Suwayomi you run, then press **Start / Retry**. Seanime's logs show lines starting with `[suwayomi]`.
-- **Custom Seanime data folder** (`--datadir`, Docker): Suwayomi still works, but the
-  per-source providers can't be generated. Use "Suwayomi (Mihon/Tachiyomi)" and its
-  **Sources** setting instead.
-- **Extension Secure Mode** is on: Seanime asks before the plugin runs a command or touches files. Accept the prompts on first start.
-- **A source fails or has Cloudflare.** That's the Mihon extension itself. Try another source for the same manga.
-
-## Uninstall
-
-Remove "Suwayomi Launcher", "Suwayomi (Mihon/Tachiyomi)" and the `… (Suwayomi)` providers in
-**Extensions**. Then delete the folder `<config>/Seanime/suwayomi`, which holds the download, the Suwayomi data and its extensions.
-
 ## Using your own Suwayomi server
 
 If you already run Suwayomi (e.g. in Docker), you can install only the provider:
@@ -102,6 +105,11 @@ https://raw.githubusercontent.com/oktavianto/seanime-suwayomi/main/dist/suwayomi
 
 Then set its **Suwayomi server URL**, and optionally a username and password. You can also
 add `https://raw.githubusercontent.com/oktavianto/seanime-suwayomi/main/dist/repo.json` as a repository.
+
+## Uninstall
+
+Remove "Suwayomi Launcher", "Suwayomi (Mihon/Tachiyomi)" and the `… (Suwayomi)` providers in
+**Extensions**. Then delete the folder `<config>/Seanime/suwayomi`, which holds the download, the Suwayomi data and its extensions.
 
 ## Development
 

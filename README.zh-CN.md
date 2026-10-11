@@ -1,39 +1,57 @@
-# Seanime × Suwayomi：在 Seanime 中使用 Tachiyomi/Mihon 扩展看漫画
+# Seanime × Suwayomi
 
 [English](README.md) · [Bahasa Indonesia](README.id.md) · [Español](README.es.md) · [Português (BR)](README.pt-BR.md) · **简体中文** · [Русский](README.ru.md) · [Français](README.fr.md)
 
-在 [Seanime](https://seanime.app) 中通过任意 **Tachiyomi / Mihon 扩展**（keiyoushi 仓库等）阅读漫画，
-**无需任何配置**。不用安装 Java 或 Docker，也不用修改任何配置文件。
+通过 Suwayomi，在 [Seanime](https://seanime.app) 中使用 **Tachiyomi / Mihon 扩展**阅读漫画。
 
-插件会下载便携版 [Suwayomi-Server](https://github.com/Suwayomi/Suwayomi-Server) 并在后台运行。
-Suwayomi 负责在电脑上运行 Mihon 扩展。
+Windows x64、Linux x64 和 macOS 已包含 Java。其他设备需要 **Java 21+**。
 
-- Seanime 侧边栏中的 **Mihon Extensions 页面**：添加仓库，然后搜索、筛选、安装、更新和卸载扩展。
-- **每个已安装的源都会出现在 Seanime 漫画的 "Source" 列表中**，例如 `Komiku (ID) (Suwayomi)` 或 `MangaDex (Suwayomi)`。如果某个源图片加载失败或缺少章节，换一个源即可。
-- **"Suwayomi (Mihon/Tachiyomi)"** 可同时搜索所有源。在 **Manual match** 中，每条结果会显示所属源、章节数和最新章节，例如 `[Komiku (ID) · 41 ch · latest 39]`。
-- **图片通过 Seanime 的图片代理加载**。
-- **通过 Seanime 的扩展更新器自动更新**。
+![Seanime 中的 Mihon Extensions 页面](docs/screenshots/mihon-extensions.jpg)
+
+## 快速开始
+
+1. 在 Seanime 中打开 **Extensions → Add extension**。粘贴下方 URL，点击 **Install**，提示权限时点击 **Grant**。
+
+   ```text
+   https://raw.githubusercontent.com/oktavianto/seanime-suwayomi/main/dist/suwayomi-launcher.json
+   ```
+
+2. Suwayomi 就绪后，在侧边栏打开 **Mihon Extensions**。添加仓库 URL（`index.min.json`），安装漫画源，然后点击 **Allow** 启用。
+3. 打开漫画 → **Source** → 选择 `<源名称> (Suwayomi)`，开始阅读。
+
+首次启动需下载 **200–350 MB，仅一次**。可在 Seanime 顶部的 Suwayomi 托盘图标中查看进度。
 
 > [!IMPORTANT]
 > 本项目不提供、托管或分发任何媒体内容。用户应通过合法途径获取媒体内容，并遵守当地法律。应用中列出的扩展与本项目及 Seanime 均无关联，如违反版权法可能会被移除。
 
-## 安装（1 分钟）
+---
 
-1. 在 Seanime 中打开 **Extensions** → **Add extension**，粘贴以下 URL：
+[功能](#features) · [故障排除](#故障排除) · [平台与 Java](#支持的平台) · [权限](#权限) · [自有服务器](#使用自己的-suwayomi-服务器) · [开发](#开发)
 
-   ```
-   https://raw.githubusercontent.com/oktavianto/seanime-suwayomi/main/dist/suwayomi-launcher.json
-   ```
+<a id="features"></a>
 
-2. 点击 **Install**。插件会显示 **"Permissions required"**，点击 **Grant**。
-   具体申请了哪些权限，请看[权限](#权限)。
-3. 等待首次启动。Suwayomi 只需下载**一次**（约 200–350 MB）。进度显示在 Seanime 顶部的 Suwayomi 托盘图标中。
-4. 在侧边栏打开 **Mihon Extensions**，添加一个仓库 URL，例如 Mihon/keiyoushi 的
-   `index.min.json`，然后安装你需要的源。
-5. 每添加一个新源，Seanime 都会询问 *"Allow Suwayomi Launcher to enable …?"*，点击 **Allow**。
-6. 在 Seanime 中打开任意漫画 → **Source** → 选择 `<源名称> (Suwayomi)`。
+## 工作原理与功能
 
-启动器还会自动安装 "Suwayomi (Mihon/Tachiyomi)" 漫画提供器，无需手动添加。
+启动器会下载便携版 [Suwayomi-Server](https://github.com/Suwayomi/Suwayomi-Server)，在后台运行，并自动安装漫画提供器。
+
+- **管理扩展：**在 **Mihon Extensions** 中添加仓库、搜索、筛选、安装、更新和卸载扩展。
+- **选择漫画源：**每个已安装的源都会出现在 Seanime 中，例如 `Example (EN) (Suwayomi)`。图片或章节缺失时可切换源。
+- **跨源搜索：**选择 **Suwayomi (Mihon/Tachiyomi)**。**Manual match** 显示源名称、章节数和最新章节，例如 `[Example (EN) · 41 ch · latest 39]`。
+- **图片与更新：**图片通过 Seanime 的代理加载；插件通过 Seanime 的扩展更新器更新。
+
+| | |
+|---|---|
+| ![使用 Suwayomi 源的漫画页面](docs/screenshots/manga-source.jpg) | ![Suwayomi 托盘菜单](docs/screenshots/tray.jpg) |
+| 章节从所选的 `(Suwayomi)` 源加载 | 托盘中的服务器状态 |
+
+## 故障排除
+
+- **新源没有出现在 Source 列表中。** 安装源时，Seanime 会询问 *"Allow Suwayomi Launcher to enable …?"*，请点击 **Allow**。如果你点了 Don't Allow，或者没有弹出询问，重启 Seanime，源会在启动时加载。
+- **"Suwayomi did not start"。** 可能有其他程序占用了 4567 端口。关闭该程序，或停止你正在运行的其他 Suwayomi，然后点击 **Start / Retry**。Seanime 日志中以 `[suwayomi]` 开头的行会显示相关信息。
+- **自定义 Seanime 数据目录**（`--datadir`、Docker）：Suwayomi 仍可使用，但无法生成按源划分的提供器。
+  请改用 "Suwayomi (Mihon/Tachiyomi)" 及其 **Sources** 设置。
+- **已开启 Extension Secure Mode**：插件执行命令或访问文件前，Seanime 会先询问。首次启动时请同意这些提示。
+- **某个源出错或有 Cloudflare 验证。** 这是该 Mihon 扩展本身的问题。请为同一部漫画换一个源。
 
 ## 支持的平台
 
@@ -76,20 +94,6 @@ Suwayomi 负责在电脑上运行 Mihon 扩展。
 `<config>` 在 Windows 上是 `%APPDATA%`，在 macOS 上是 `~/Library/Application Support`，在 Linux 上是 `~/.config`。
 也就是 Seanime 的默认数据目录。
 
-## 故障排除
-
-- **新源没有出现在 Source 列表中。** 安装源时，Seanime 会询问 *"Allow Suwayomi Launcher to enable …?"*，请点击 **Allow**。如果你点了 Don't Allow，或者没有弹出询问，重启 Seanime，源会在启动时加载。
-- **"Suwayomi did not start"。** 可能有其他程序占用了 4567 端口。关闭该程序，或停止你正在运行的其他 Suwayomi，然后点击 **Start / Retry**。Seanime 日志中以 `[suwayomi]` 开头的行会显示相关信息。
-- **自定义 Seanime 数据目录**（`--datadir`、Docker）：Suwayomi 仍可使用，但无法生成按源划分的提供器。
-  请改用 "Suwayomi (Mihon/Tachiyomi)" 及其 **Sources** 设置。
-- **已开启 Extension Secure Mode**：插件执行命令或访问文件前，Seanime 会先询问。首次启动时请同意这些提示。
-- **某个源出错或有 Cloudflare 验证。** 这是该 Mihon 扩展本身的问题。请为同一部漫画换一个源。
-
-## 卸载
-
-在 **Extensions** 中移除 "Suwayomi Launcher"、"Suwayomi (Mihon/Tachiyomi)" 以及所有 `… (Suwayomi)` 提供器。
-然后删除 `<config>/Seanime/suwayomi` 文件夹，其中包含下载文件、Suwayomi 数据及其扩展。
-
 ## 使用自己的 Suwayomi 服务器
 
 如果你已经在运行 Suwayomi（例如在 Docker 中），可以只安装提供器：
@@ -100,6 +104,11 @@ https://raw.githubusercontent.com/oktavianto/seanime-suwayomi/main/dist/suwayomi
 
 然后设置它的 **Suwayomi server URL**，如有需要再填写用户名和密码。你也可以把
 `https://raw.githubusercontent.com/oktavianto/seanime-suwayomi/main/dist/repo.json` 添加为仓库。
+
+## 卸载
+
+在 **Extensions** 中移除 "Suwayomi Launcher"、"Suwayomi (Mihon/Tachiyomi)" 以及所有 `… (Suwayomi)` 提供器。
+然后删除 `<config>/Seanime/suwayomi` 文件夹，其中包含下载文件、Suwayomi 数据及其扩展。
 
 ## 开发
 
