@@ -1,6 +1,6 @@
 # Seanime × Suwayomi: Tachiyomi/Mihon extensions for Seanime manga
 
-**English** · [Bahasa Indonesia](README.id.md)
+**English** · [Bahasa Indonesia](README.id.md) · [Español](README.es.md) · [Português (BR)](README.pt-BR.md) · [简体中文](README.zh-CN.md) · [Русский](README.ru.md) · [Français](README.fr.md)
 
 Read manga in [Seanime](https://seanime.app) from any **Tachiyomi / Mihon extension**
 (the keiyoushi repo and others), with **zero setup**. You don't need to install Java or Docker or
@@ -14,6 +14,9 @@ and runs it in the background. Suwayomi is what runs the Mihon extensions on a P
 - **"Suwayomi (Mihon/Tachiyomi)"** searches all sources at once. In **Manual match**, each result shows its source, its chapter count and its latest chapter, e.g. `[Komiku (ID) · 41 ch · latest 39]`.
 - **Images load** through Seanime's image proxy.
 - **Updates are automatic** through Seanime's extension updater.
+
+> [!IMPORTANT]
+> This project does not provide, host, or distribute any media content. Users are responsible for obtaining media through legal means and complying with their local laws. Extensions listed in the app are unaffiliated with this project or Seanime and may be removed if they violate copyright laws.
 
 ## Install (1 minute)
 
