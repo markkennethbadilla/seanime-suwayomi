@@ -63,7 +63,11 @@ class Provider {
     } catch (e) {
       throw new Error(`Suwayomi is not reachable at ${this.serverUrl} — is the "Suwayomi Launcher" plugin running? (${e})`);
     }
-    const json = res.status === 401 ? null : await res.json().catch(() => null);
+    // Seanime's runtime may return json() synchronously, so no .catch() chaining here.
+    let json = null;
+    if (res.status !== 401) {
+      try { json = await res.json(); } catch (e) { json = null; }
+    }
     if (res.status === 401 || (json && json.errors && json.errors.some(e => /unauthori[sz]ed/i.test(e.message)))) {
       return { unauthorized: true };
     }
