@@ -268,6 +268,9 @@ class Provider {
     // Non-empty headers make Seanime load pages through its own image proxy. The reader in the
     // browser can't reach 127.0.0.1:4567 directly, but the Seanime server can.
     const headers = { Accept: "image/*", ...this.authHeaders() };
-    return pages.map((p, index) => ({ url: this.absUrl(p), index, headers }));
+    // In ui_login mode the page endpoint accepts Basic auth (admin only) when opds=true; access
+    // tokens expire in minutes, too soon for a long chapter.
+    const suffix = this.token ? (p => (p.includes("?") ? "&" : "?") + "opds=true") : () => "";
+    return pages.map((p, index) => ({ url: this.absUrl(p) + suffix(p), index, headers }));
   }
 }
