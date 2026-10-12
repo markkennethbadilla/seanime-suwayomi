@@ -18,6 +18,7 @@ class Provider {
     this.fixedSource = fixed.startsWith("__") ? "" : fixed;
     this.sourceCache = null;
     this.sourceCacheAt = 0;
+    this.token = null; // JWT, only in Suwayomi's ui_login mode
   }
 
   getSettings() {
@@ -42,23 +43,48 @@ class Provider {
     return this.serverUrl + (path.startsWith("/") ? "" : "/") + path;
   }
 
-  async gql(query, variables) {
+  // ui_login mode (Suwayomi multi-user) ignores Basic auth on the GraphQL API: log in for a JWT.
+  async login() {
+    const data = await this.post(
+      "mutation($u: String!, $p: String!) { login(input: { username: $u, password: $p }) { accessToken } }",
+      { u: this.username, p: this.password }, {});
+    if (data.unauthorized) throw new Error(`Suwayomi login refused (${this.serverUrl})`);
+    this.token = data.login.accessToken;
+  }
+
+  async post(query, variables, auth) {
     let res;
     try {
       res = await fetch(`${this.serverUrl}/api/graphql`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json", ...this.authHeaders() },
+        headers: { "Content-Type": "application/json", Accept: "application/json", ...auth },
         body: JSON.stringify({ query, variables: variables || {} }),
       });
     } catch (e) {
       throw new Error(`Suwayomi is not reachable at ${this.serverUrl} — is the "Suwayomi Launcher" plugin running? (${e})`);
     }
-    if (!res.ok) throw new Error(`Suwayomi HTTP ${res.status} (${this.serverUrl})`);
-    const json = await res.json();
+    const json = res.status === 401 ? null : await res.json().catch(() => null);
+    if (res.status === 401 || (json && json.errors && json.errors.some(e => /unauthori[sz]ed/i.test(e.message)))) {
+      return { unauthorized: true };
+    }
+    if (!res.ok || !json) throw new Error(`Suwayomi HTTP ${res.status} (${this.serverUrl})`);
     if (json.errors && json.errors.length) {
       throw new Error("Suwayomi: " + json.errors.map(e => e.message).join("; "));
     }
     return json.data;
+  }
+
+  async gql(query, variables) {
+    const auth = () => (this.token ? { Authorization: `Bearer ${this.token}` } : this.authHeaders());
+    let data = await this.post(query, variables, auth());
+    // Access tokens are short-lived (server.jwtTokenExpiry, 5 min by default): log in again once.
+    if (data.unauthorized && this.username) {
+      this.token = null;
+      await this.login();
+      data = await this.post(query, variables, auth());
+    }
+    if (data.unauthorized) throw new Error(`Suwayomi HTTP 401 (${this.serverUrl}): set the username and password`);
+    return data;
   }
 
   splitList(s) {
